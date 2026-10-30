@@ -1,0 +1,359 @@
+@import "react-day-picker/style.css";
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-300: #5eead4;
+  --color-brand-400: #2dd4bf;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
+
+  --color-canvas: #f5f8f8;
+  --color-surface: #ffffff;
+  --color-ink: #0f1c24;
+  --color-muted: #5a6b75;
+  --color-line: #dfe8e9;
+
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --color-info: #1d4ed8;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 1rem;
+}
+
+.dark {
+  color-scheme: dark;
+  --color-canvas: #0b1220;
+  --color-surface: #111a2b;
+  --color-ink: #e6edf5;
+  --color-muted: #94a3b8;
+  --color-line: #263449;
+
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #fb7185;
+  --color-info: #60a5fa;
+}
+
+@layer base {
+  html {
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-canvas text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+}
+
+/* Ajustes de color para las superficies semanticas que ya usan los
+   componentes. Los tokens base viven en @theme; aqui solo se adaptan los
+   acentos que Tailwind genera con colores fijos. */
+.dark .bg-brand-50 {
+  background-color: #0b2b2a;
+}
+
+.dark .bg-brand-50\/60 {
+  background-color: rgb(11 43 42 / 0.6);
+}
+
+.dark .bg-brand-100 {
+  background-color: #123f3c;
+}
+
+.dark .text-brand-700 {
+  color: #5eead4;
+}
+
+.dark .text-brand-800 {
+  color: #99f6e4;
+}
+
+.dark .text-brand-900 {
+  color: #ccfbf1;
+}
+
+.dark .hover\:text-brand-800:hover {
+  color: #99f6e4;
+}
+
+.dark .border-brand-200 {
+  border-color: #134e4a;
+}
+
+.dark .ring-brand-200 {
+  --tw-ring-color: #134e4a;
+}
+
+.dark ::selection {
+  background-color: #115e59;
+  color: #f0fdfa;
+}
+
+.dark .bg-amber-50 {
+  background-color: #35260a;
+}
+
+.dark .bg-amber-100 {
+  background-color: #3f2d0b;
+}
+
+.dark .text-amber-700,
+.dark .text-amber-800 {
+  color: #fcd34d;
+}
+
+.dark .border-amber-200,
+.dark .border-amber-300 {
+  border-color: #92400e;
+}
+
+.dark .ring-amber-200 {
+  --tw-ring-color: #92400e;
+}
+
+.dark .bg-rose-50 {
+  background-color: #3b1119;
+}
+
+.dark .text-rose-700,
+.dark .text-rose-800 {
+  color: #fda4af;
+}
+
+.dark .border-rose-200 {
+  border-color: #881337;
+}
+
+.dark .ring-rose-200 {
+  --tw-ring-color: #881337;
+}
+
+.dark .bg-emerald-50 {
+  background-color: #062f22;
+}
+
+.dark .text-emerald-700,
+.dark .text-emerald-800 {
+  color: #6ee7b7;
+}
+
+.dark .ring-emerald-200 {
+  --tw-ring-color: #065f46;
+}
+
+.dark .bg-blue-50 {
+  background-color: #10243f;
+}
+
+.dark .text-blue-800 {
+  color: #bfdbfe;
+}
+
+.dark .ring-blue-200 {
+  --tw-ring-color: #1e40af;
+}
+
+.dark .bg-teal-50 {
+  background-color: #0b2f2d;
+}
+
+.dark .text-teal-800 {
+  color: #99f6e4;
+}
+
+.dark .ring-teal-200 {
+  --tw-ring-color: #115e59;
+}
+
+.dark .bg-slate-100 {
+  background-color: #1e293b;
+}
+
+.dark .text-slate-700 {
+  color: #cbd5e1;
+}
+
+.dark .ring-slate-200 {
+  --tw-ring-color: #334155;
+}
+
+.dark .bg-white\/10 {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.overbooking-stripes {
+  background-image: repeating-linear-gradient(
+    135deg,
+    #fffbeb 0 8px,
+    #fef3c7 8px 16px
+  );
+}
+
+.dark .overbooking-stripes {
+  background-image: repeating-linear-gradient(
+    135deg,
+    #2a2110 0 8px,
+    #3a2c12 8px 16px
+  );
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-2xl {
+  --tw-shadow-color: rgb(0 0 0 / 0.35);
+}
+
+@utility card {
+  @apply rounded-[var(--radius-card)] border border-line bg-surface;
+}
+
+@utility focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+}
+
+/* Notificaciones globales */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(24px) scale(0.96);
+  }
+}
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.toast-in {
+  animation: toast-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.toast-out {
+  animation: toast-out 180ms ease-in both;
+}
+
+.toast-progress {
+  transform-origin: left;
+  animation-name: toast-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-in,
+  .toast-out,
+  .toast-progress {
+    animation: none;
+  }
+}
+
+/* Carruseles del modo TV */
+@keyframes carousel-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.carousel-item {
+  animation: carousel-fade 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-item {
+    animation: none;
+  }
+}
+
+/* Dialogos shadcn/radix */
+@keyframes dialog-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.dialog-overlay[data-state="open"] {
+  animation: dialog-fade 160ms ease-out both;
+}
+
+.dialog-content[data-state="open"] {
+  animation: dialog-pop 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay[data-state="open"],
+  .dialog-content[data-state="open"] {
+    animation: none;
+  }
+}
+
+/* Marca del CRM aplicada al calendario de react-day-picker */
+.rdp-root {
+  --rdp-accent-color: var(--color-brand-700);
+  --rdp-accent-background-color: var(--color-brand-50);
+  --rdp-today-color: var(--color-brand-800);
+  --rdp-day_button-width: var(--cell-size, 2.25rem);
+  --rdp-day_button-height: var(--cell-size, 2.25rem);
+}
+
+.rdp-root .rdp-day_button[data-selected-single="true"],
+.rdp-root .rdp-day_button[data-range-start="true"],
+.rdp-root .rdp-day_button[data-range-end="true"] {
+  background-color: var(--color-brand-700);
+  color: #ffffff;
+  border-color: var(--color-brand-700);
+}
+
+.rdp-root .rdp-selected .rdp-day_button {
+  border-color: var(--color-brand-700);
+}
