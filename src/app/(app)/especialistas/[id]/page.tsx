@@ -2,9 +2,10 @@ import { ArrowLeft, CalendarDays, Stethoscope } from "lucide-react";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { AvailabilityEditor } from "@/components/practitioners/availability-editor";
+import { AvailabilityRulesEditor } from "@/components/practitioners/availability-rules-editor";
 import { PractitionerProfileForm } from "@/components/practitioners/practitioner-profile-form";
 import { PractitionerServicesEditor } from "@/components/practitioners/practitioner-services-editor";
+import { ScheduleBlocksEditor } from "@/components/practitioners/schedule-blocks-editor";
 import { FlashToast } from "@/components/ui/flash-toast";
 import { api } from "@/lib/api";
 import { todayIn } from "@/lib/dates";
@@ -15,21 +16,29 @@ import type {
   Practitioner,
   PractitionerService,
   ScheduleBlock,
+  Service,
 } from "@/lib/types";
+
+const TAB_VALUES = ["general", "services", "availability", "blocks"] as const;
+type TabValue = (typeof TAB_VALUES)[number];
+
+function isTab(value: string | undefined): value is TabValue {
+  return !!value && (TAB_VALUES as readonly string[]).includes(value);
+}
 
 export default async function PractitionerPage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ created?: string }>;
+  searchParams: Promise<{ created?: string; tab?: string }>;
 }) {
   const session = await getSession();
   if (!session) redirect("/login");
   if (session.user.role === "practitioner") redirect("/mi-dia");
 
   const { id } = await params;
-  const { created } = await searchParams;
+  const { created, tab } = await searchParams;
   const { token, clinic, user } = session;
 
   const practitioners = await api<Practitioner[]>(
@@ -42,7 +51,7 @@ export default async function PractitionerPage({
   const from = DateTime.now().minus({ days: 30 }).toUTC().toISO() ?? "";
   const to = DateTime.now().plus({ days: 90 }).toUTC().toISO() ?? "";
 
-  const [rules, blocks, practitionerServices] = await Promise.all([
+  const [rules, blocks, practitionerServices, services] = await Promise.all([
     api<AvailabilityRule[]>(
       `/api/v1/availability/rules?practitionerId=${practitioner.id}`,
       { token },
@@ -56,17 +65,37 @@ export default async function PractitionerPage({
       `/api/v1/practitioner-services?practitionerId=${practitioner.id}`,
       { token },
     ).catch(() => []),
+    api<Service[]>("/api/v1/services?active=true", { token }).catch(() => []),
   ]);
 
   const canEdit = user.role === "admin";
   const { t } = await getI18n();
+  const currentTab: TabValue = isTab(tab) ? tab : "general";
+  const tabs: Array<{ value: TabValue; label: string; count?: number }> = [
+    { value: "general", label: t("practitioners.tabGeneral") },
+    {
+      value: "services",
+      label: t("practitioners.tabServices"),
+      count: practitionerServices.length,
+    },
+    {
+      value: "availability",
+      label: t("practitioners.tabAvailability"),
+      count: rules.length,
+    },
+    {
+      value: "blocks",
+      label: t("practitioners.tabBlocks"),
+      count: blocks.length,
+    },
+  ];
 
   return (
     <div className="space-y-6">
       {created === "1" ? (
         <FlashToast
           message={t("practitioners.createdToast")}
-          cleanPath={`/especialistas/${practitioner.id}`}
+          cleanPath={`/especialistas/${practitioner.id}?tab=${currentTab}`}
         />
       ) : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -82,7 +111,7 @@ export default async function PractitionerPage({
           className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium hover:border-brand-200 hover:text-brand-800"
         >
           <CalendarDays className="h-4 w-4" aria-hidden />
-          Ver agenda
+          {t("practitioners.viewAgenda")}
         </Link>
       </div>
 
@@ -100,10 +129,7 @@ export default async function PractitionerPage({
             </h1>
             <p className="mt-1 text-sm text-muted">
               {practitioner.specialty ?? t("practitioners.general")} ·{" "}
-              {t("practitioners.scheduleSummary", {
-                slot: practitioner.defaultSlotMinutes ?? 30,
-                buffer: practitioner.bufferAfterMinutes ?? 5,
-              })}
+              {t("practitioners.durationByService")}
             </p>
             <p className="mt-2 text-xs text-muted">
               {practitioner.isActive !== false
@@ -118,28 +144,80 @@ export default async function PractitionerPage({
         </div>
       </header>
 
-      {canEdit ? (
-        <PractitionerProfileForm practitioner={practitioner} />
-      ) : (
-        <p className="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-muted">
-          Solo administración puede editar el perfil y la disponibilidad.
-        </p>
-      )}
+      <nav
+        aria-label={t("practitioners.tabsAria")}
+        className="flex gap-1 overflow-x-auto rounded-xl border border-line bg-surface p-1"
+      >
+        {tabs.map((item) => {
+          const active = item.value === currentTab;
+          return (
+            <Link
+              key={item.value}
+              href={`/especialistas/${practitioner.id}?tab=${item.value}`}
+              scroll={false}
+              aria-current={active ? "page" : undefined}
+              className={`focus-ring inline-flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                active
+                  ? "bg-brand-700 text-white shadow-sm"
+                  : "text-muted hover:bg-canvas hover:text-ink"
+              }`}
+            >
+              {item.label}
+              {item.count !== undefined ? (
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                    active
+                      ? "bg-white/15 text-white"
+                      : "bg-canvas text-muted"
+                  }`}
+                >
+                  {item.count}
+                </span>
+              ) : null}
+            </Link>
+          );
+        })}
+      </nav>
 
-      <PractitionerServicesEditor
-        practitionerId={practitioner.id}
-        assignments={practitionerServices}
-        canEdit={canEdit}
-      />
+      {currentTab === "general" ? (
+        canEdit ? (
+          <PractitionerProfileForm practitioner={practitioner} />
+        ) : (
+          <p className="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-muted">
+            {t("practitioners.readOnlyHint")}
+          </p>
+        )
+      ) : null}
 
-      <AvailabilityEditor
-        practitionerId={practitioner.id}
-        rules={rules}
-        blocks={blocks}
-        timezone={clinic.timezone}
-        today={todayIn(clinic.timezone)}
-        canEdit={canEdit}
-      />
+      {currentTab === "services" ? (
+        <PractitionerServicesEditor
+          practitionerId={practitioner.id}
+          assignments={practitionerServices}
+          services={services}
+          canEdit={canEdit}
+          defaultDuration={practitioner.defaultSlotMinutes ?? 30}
+        />
+      ) : null}
+
+      {currentTab === "availability" ? (
+        <AvailabilityRulesEditor
+          practitionerId={practitioner.id}
+          rules={rules}
+          timezone={clinic.timezone}
+          today={todayIn(clinic.timezone)}
+          canEdit={canEdit}
+        />
+      ) : null}
+
+      {currentTab === "blocks" ? (
+        <ScheduleBlocksEditor
+          practitionerId={practitioner.id}
+          blocks={blocks}
+          timezone={clinic.timezone}
+          today={todayIn(clinic.timezone)}
+          canEdit={canEdit}
+        />
+      ) : null}
     </div>
   );
 }

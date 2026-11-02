@@ -127,12 +127,18 @@ export type TenantSummary = {
   slug: string;
   timezone: string;
   currency: string;
+  latitude: number | null;
+  longitude: number | null;
   isActive: boolean;
   createdAt: string;
   usersCount: number;
   practitionersCount: number;
   patientsCount: number;
   appointmentsCount: number;
+  contractCount: number;
+  contractEndsAt: string | null;
+  contractStatus: "none" | "active" | "expiring" | "expired" | "inactive";
+  contractDaysLeft: number | null;
 };
 
 export type TenantUser = {
@@ -150,6 +156,21 @@ export type TenantUser = {
 export type TenantDetail = TenantSummary & {
   users: TenantUser[];
   practitioners: Array<{ id: string; fullName: string; isActive: boolean }>;
+};
+
+export type TenantContract = {
+  id: string;
+  clinicId: string;
+  name: string;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  startsAt: string;
+  endsAt: string | null;
+  isActive: boolean;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type ReminderJob = {

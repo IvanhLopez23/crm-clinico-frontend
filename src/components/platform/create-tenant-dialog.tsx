@@ -144,7 +144,38 @@ function TenantForm({
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tenant-latitude">{t("platform.latitude")}</Label>
+                <Input
+                  id="tenant-latitude"
+                  name="latitude"
+                  type="number"
+                  step="0.000001"
+                  min={-90}
+                  max={90}
+                  placeholder="19.4326"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tenant-longitude">
+                  {t("platform.longitude")}
+                </Label>
+                <Input
+                  id="tenant-longitude"
+                  name="longitude"
+                  type="number"
+                  step="0.000001"
+                  min={-180}
+                  max={180}
+                  placeholder="-99.1332"
+                />
+              </div>
             </div>
+            <p className="text-xs text-muted">
+              {t("platform.coordinatesHint")}
+            </p>
           </section>
 
           <section className="space-y-3 border-t border-line pt-4">

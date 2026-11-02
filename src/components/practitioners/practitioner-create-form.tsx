@@ -92,7 +92,7 @@ function PractitionerCreateDialog({ onClose }: { onClose: () => void }) {
             htmlFor="defaultSlotMinutes"
             className="text-xs font-medium text-muted"
           >
-            Duración habitual de la cita
+            {t("practitioners.defaultDuration")}
           </label>
           <select
             id="defaultSlotMinutes"

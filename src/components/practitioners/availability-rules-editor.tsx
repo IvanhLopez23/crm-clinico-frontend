@@ -1,20 +1,17 @@
 "use client";
 
 import { ChevronDown, LoaderCircle, Plus, Trash2 } from "lucide-react";
-import { DateTime } from "luxon";
 import { useRef, useState } from "react";
 import {
-  createBlockAction,
   createWeeklyScheduleAction,
   deleteAvailabilityRuleAction,
-  deleteBlockAction,
   updateAvailabilityRuleAction,
 } from "@/app/actions/practitioners";
 import { ActionForm } from "@/components/ui/action-form";
-import { DatePicker, DateTimePicker } from "@/components/ui/date-picker";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useI18n } from "@/i18n/client";
 import { useToastActionState } from "@/lib/use-toast-action";
-import type { AvailabilityRule, ScheduleBlock } from "@/lib/types";
+import type { AvailabilityRule } from "@/lib/types";
 
 const DAY_OPTIONS = [
   { value: 1, short: "Lun", long: "Lunes" },
@@ -37,31 +34,18 @@ const WEEKDAYS = [
   "Domingo",
 ];
 
-const BLOCK_TYPES: Record<string, string> = {
-  break: "Descanso",
-  vacation: "Vacaciones",
-  meeting: "Reunión",
-  surgery: "Cirugía",
-  personal: "Personal",
-  holiday: "Feriado",
-  maintenance: "Mantenimiento",
-  other: "Otro",
-};
-
 const inputClass =
   "focus-ring w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm shadow-sm";
 
-export function AvailabilityEditor({
+export function AvailabilityRulesEditor({
   practitionerId,
   rules,
-  blocks,
   timezone,
   today,
   canEdit,
 }: {
   practitionerId: string;
   rules: AvailabilityRule[];
-  blocks: ScheduleBlock[];
   timezone: string;
   today: string;
   canEdit: boolean;
@@ -75,120 +59,57 @@ export function AvailabilityEditor({
   })).filter((group) => group.rules.length > 0);
 
   return (
-    <div className="space-y-6">
-      <section className="card overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-4">
-          <div>
-            <h2 className="font-semibold">{t("availability.weekly")}</h2>
-            <p className="text-xs text-muted">
-              {t("availability.weeklyHint")}
-            </p>
+    <section className="card overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-4">
+        <div>
+          <h2 className="font-semibold">{t("availability.weekly")}</h2>
+          <p className="text-xs text-muted">{t("availability.weeklyHint")}</p>
+        </div>
+        <span className="text-xs text-muted">
+          {t("availability.days", { count: grouped.length })} ·{" "}
+          {t("availability.rules", { count: rules.length })}
+        </span>
+      </div>
+
+      <div className="space-y-4 p-5">
+        {grouped.length === 0 ? (
+          <p className="text-sm text-muted">{t("availability.noRules")}</p>
+        ) : (
+          <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+            {grouped.map((group) => (
+              <article
+                key={group.value}
+                className="flex h-full flex-col rounded-2xl border border-line bg-canvas p-4"
+              >
+                <header className="border-b border-line pb-3">
+                  <p className="text-base font-semibold">{group.long}</p>
+                  <p className="mt-0.5 text-xs text-muted">
+                    {group.rules.length}{" "}
+                    {group.rules.length === 1 ? "bloque" : "bloques"} de
+                    atención
+                  </p>
+                </header>
+
+                <div className="mt-3 space-y-2">
+                  {group.rules.map((rule) => (
+                    <RuleRow
+                      key={rule.id}
+                      rule={rule}
+                      timezone={timezone}
+                      canEdit={canEdit}
+                    />
+                  ))}
+                </div>
+              </article>
+            ))}
           </div>
-          <span className="text-xs text-muted">
-            {grouped.length} {grouped.length === 1 ? "día" : "días"} ·{" "}
-            {rules.length} {rules.length === 1 ? "bloque" : "bloques"}
-          </span>
-        </div>
+        )}
 
-        <div className="space-y-4 p-5">
-          {grouped.length === 0 ? (
-            <p className="text-sm text-muted">
-              {t("availability.noRules")}
-            </p>
-          ) : (
-            <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-              {grouped.map((group) => (
-                <article
-                  key={group.value}
-                  className="flex h-full flex-col rounded-2xl border border-line bg-canvas p-4"
-                >
-                  <header className="border-b border-line pb-3">
-                    <p className="text-base font-semibold">{group.long}</p>
-                    <p className="mt-0.5 text-xs text-muted">
-                      {group.rules.length}{" "}
-                      {group.rules.length === 1 ? "bloque" : "bloques"} de
-                      atención
-                    </p>
-                  </header>
-
-                  <div className="mt-3 space-y-2">
-                    {group.rules.map((rule) => (
-                      <RuleRow
-                        key={rule.id}
-                        rule={rule}
-                        timezone={timezone}
-                        canEdit={canEdit}
-                      />
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-
-          {canEdit ? <AddRuleForm practitionerId={practitionerId} today={today} /> : null}
-        </div>
-      </section>
-
-      <section className="card overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-4">
-          <div>
-            <h2 className="font-semibold">{t("availability.blocks")}</h2>
-            <p className="text-xs text-muted">
-              Vacaciones, reuniones, cirugías o descansos con fecha exacta.
-            </p>
-          </div>
-          <span className="text-xs text-muted">{blocks.length} bloqueos</span>
-        </div>
-
-        <div className="space-y-3 p-5">
-          {blocks.length === 0 ? (
-            <p className="text-sm text-muted">{t("availability.noBlocks")}</p>
-          ) : (
-            <ul className="divide-y divide-line rounded-xl border border-line">
-              {blocks.map((block) => (
-                <li
-                  key={block.id}
-                  className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5"
-                >
-                  <div>
-                    <p className="text-sm font-medium">
-                      {formatRange(block.startsAt, block.endsAt, timezone)}
-                    </p>
-                    <p className="text-xs text-muted">
-                      {BLOCK_TYPES[block.type] ?? block.type}
-                      {block.reason ? ` · ${block.reason}` : ""}
-                    </p>
-                  </div>
-                  {canEdit ? (
-                    <ActionForm
-                      action={deleteBlockAction}
-                      successMessage={t("availability.blockDeleted")}
-                    >
-                      <input type="hidden" name="blockId" value={block.id} />
-                      <input
-                        type="hidden"
-                        name="practitionerId"
-                        value={practitionerId}
-                      />
-                      <button
-                        type="submit"
-                        className="focus-ring inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30"
-                      >
-                        <Trash2 className="h-3 w-3" aria-hidden />
-                        {t("availability.delete")}
-                      </button>
-                    </ActionForm>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {canEdit ? <AddBlockForm practitionerId={practitionerId} /> : null}
-        </div>
-      </section>
-    </div>
+        {canEdit ? (
+          <AddRuleForm practitionerId={practitionerId} today={today} />
+        ) : null}
+      </div>
+    </section>
   );
 }
 
@@ -217,8 +138,8 @@ function RuleRow({
             {rule.startTime.slice(0, 5)} – {rule.endTime.slice(0, 5)}
           </p>
           <p className="mt-0.5 text-xs text-muted">
-            Duración {rule.slotMinutes} min · vigente desde {rule.validFrom}
-            {rule.validTo ? ` hasta ${rule.validTo}` : ""}
+            {t("availability.validFrom")} {rule.validFrom}
+            {rule.validTo ? ` · ${rule.validTo}` : ""}
           </p>
         </div>
 
@@ -237,7 +158,11 @@ function RuleRow({
               successMessage={t("availability.ruleDeleted")}
             >
               <input type="hidden" name="ruleId" value={rule.id} />
-              <input type="hidden" name="practitionerId" value={rule.practitionerId} />
+              <input
+                type="hidden"
+                name="practitionerId"
+                value={rule.practitionerId}
+              />
               <button
                 type="submit"
                 className="focus-ring inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30"
@@ -256,10 +181,14 @@ function RuleRow({
           className="mt-3 grid gap-3 border-t border-line pt-3 sm:grid-cols-2"
         >
           <input type="hidden" name="ruleId" value={rule.id} />
-          <input type="hidden" name="practitionerId" value={rule.practitionerId} />
+          <input
+            type="hidden"
+            name="practitionerId"
+            value={rule.practitionerId}
+          />
 
           <label className="space-y-1 text-xs text-muted">
-            Día
+            {t("availability.day")}
             <select
               name="weekday"
               defaultValue={rule.weekday}
@@ -291,21 +220,6 @@ function RuleRow({
               defaultValue={rule.endTime.slice(0, 5)}
               className={inputClass}
             />
-          </label>
-
-          <label className="space-y-1 text-xs text-muted">
-            Duración de cada cita
-            <input
-              type="number"
-              name="slotMinutes"
-              min={5}
-              max={120}
-              defaultValue={rule.slotMinutes}
-              className={inputClass}
-            />
-            <span className="block text-[11px] font-normal">
-              Define también cada cuánto puede iniciar una cita.
-            </span>
           </label>
 
           <label className="space-y-1 text-xs text-muted">
@@ -505,23 +419,7 @@ function AddRuleForm({
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <label className="space-y-1 text-xs text-muted">
-            Duración de cada cita
-            <input
-              type="number"
-              name="slotMinutes"
-              min={5}
-              max={120}
-              defaultValue={15}
-              className={inputClass}
-            />
-            <span className="block text-[11px] font-normal">
-              Ej. 15 min = 08:00, 08:15, 08:30… Si el servicio tiene duración
-              propia, esa manda al reservar.
-            </span>
-          </label>
-
+        <div className="grid gap-3 sm:grid-cols-2">
           <label className="space-y-1 text-xs text-muted">
             {t("availability.validFrom")}
             <DatePicker
@@ -578,80 +476,4 @@ function AddRuleForm({
       </form>
     </details>
   );
-}
-
-function AddBlockForm({ practitionerId }: { practitionerId: string }) {
-  const { t } = useI18n();
-  const detailsRef = useRef<HTMLDetailsElement>(null);
-  const [error, formAction, pending] = useToastActionState(
-    createBlockAction,
-    t("availability.blockCreated"),
-    () => detailsRef.current?.removeAttribute("open"),
-  );
-
-  return (
-    <details ref={detailsRef} className="rounded-xl border border-line bg-surface">
-      <summary className="focus-ring flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-sm font-medium text-brand-800">
-        <Plus className="h-4 w-4" aria-hidden />
-        {t("availability.addBlock")}
-      </summary>
-      <form
-        action={formAction}
-        className="grid gap-3 border-t border-line p-3 sm:grid-cols-4"
-      >
-        <input type="hidden" name="practitionerId" value={practitionerId} />
-
-        <label className="space-y-1 text-xs text-muted sm:col-span-2">
-          {t("availability.start")}
-          <DateTimePicker name="startsAt" />
-        </label>
-
-        <label className="space-y-1 text-xs text-muted sm:col-span-2">
-          {t("availability.end")}
-          <DateTimePicker name="endsAt" />
-        </label>
-
-        <label className="space-y-1 text-xs text-muted">
-          {t("availability.type")}
-          <select name="type" defaultValue="break" className={inputClass}>
-            {Object.entries(BLOCK_TYPES).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="space-y-1 text-xs text-muted">
-          {t("availability.reason")}
-          <input name="reason" className={inputClass} />
-        </label>
-
-        {error ? (
-          <p role="alert" className="text-xs text-rose-700 sm:col-span-4">
-            {error}
-          </p>
-        ) : null}
-
-        <div className="flex justify-end sm:col-span-4">
-          <button
-            type="submit"
-            disabled={pending}
-            className="focus-ring inline-flex items-center gap-1 rounded-lg bg-brand-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
-          >
-            {pending ? (
-              <LoaderCircle className="h-3 w-3 animate-spin" aria-hidden />
-            ) : null}
-            {t("availability.addBlock")}
-          </button>
-        </div>
-      </form>
-    </details>
-  );
-}
-
-function formatRange(startsAt: string, endsAt: string, timezone: string): string {
-  const start = DateTime.fromISO(startsAt, { zone: timezone });
-  const end = DateTime.fromISO(endsAt, { zone: timezone });
-  return `${start.toFormat("dd/LL HH:mm")} – ${end.toFormat("HH:mm")}`;
 }

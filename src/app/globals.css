@@ -1,4 +1,5 @@
 @import "react-day-picker/style.css";
+@import "leaflet/dist/leaflet.css";
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -356,4 +357,124 @@
 
 .rdp-root .rdp-selected .rdp-day_button {
   border-color: var(--color-brand-700);
+}
+
+/* El día seleccionado debe conservar su estilo en hover/focus y verse como
+   un círculo consistente. react-day-picker aplica por defecto un borde y una
+   fuente más grande que rompen el círculo verde del CRM. */
+.rdp-root .rdp-selected {
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.rdp-root .rdp-day_button[data-selected-single="true"],
+.rdp-root .rdp-day_button[data-range-start="true"],
+.rdp-root .rdp-day_button[data-range-end="true"] {
+  border: 0;
+  box-shadow:
+    0 0 0 2px var(--color-brand-100),
+    0 1px 2px rgb(15 118 110 / 0.25);
+}
+
+.rdp-root .rdp-day_button[data-selected-single="true"] {
+  border-radius: 9999px;
+}
+
+.rdp-root .rdp-day_button[data-range-start="true"] {
+  border-radius: 9999px 0 0 9999px;
+}
+
+.rdp-root .rdp-day_button[data-range-end="true"] {
+  border-radius: 0 9999px 9999px 0;
+}
+
+.rdp-root .rdp-day_button[data-range-start="true"][data-range-end="true"] {
+  border-radius: 9999px;
+}
+
+.rdp-root .rdp-day_button[data-selected-single="true"]:hover,
+.rdp-root .rdp-day_button[data-selected-single="true"]:focus-visible,
+.rdp-root .rdp-day_button[data-range-start="true"]:hover,
+.rdp-root .rdp-day_button[data-range-end="true"]:hover,
+.rdp-root .rdp-day_button[data-range-start="true"]:focus-visible,
+.rdp-root .rdp-day_button[data-range-end="true"]:focus-visible {
+  background-color: var(--color-brand-800);
+  color: #ffffff;
+}
+
+.rdp-root .rdp-today.rdp-selected .rdp-day_button {
+  background-color: var(--color-brand-700);
+  color: #ffffff;
+}
+
+.dark .rdp-root {
+  --rdp-accent-color: var(--color-brand-500);
+  --rdp-accent-background-color: #0b2b2a;
+  --rdp-today-color: var(--color-brand-300);
+}
+
+.dark .rdp-root .rdp-day_button[data-selected-single="true"],
+.dark .rdp-root .rdp-day_button[data-range-start="true"],
+.dark .rdp-root .rdp-day_button[data-range-end="true"] {
+  box-shadow:
+    0 0 0 2px rgb(94 234 212 / 0.25),
+    0 1px 2px rgb(0 0 0 / 0.35);
+}
+
+/* Mapa de plataforma: controles y popups alineados al tema. */
+.leaflet-container {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: inherit;
+}
+
+.leaflet-container a {
+  color: var(--color-brand-700);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgb(15 28 36 / 0.18);
+}
+
+.dark .leaflet-container {
+  background: #0b1220;
+}
+
+/* OpenStreetMap no tiene un estilo oscuro público sin API key. Este filtro
+   adapta los tiles al tema oscuro sin depender de un proveedor externo. */
+.dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9)
+    saturate(0.7);
+}
+
+.dark .leaflet-container a {
+  color: var(--color-brand-300);
+}
+
+.dark .leaflet-bar a,
+.dark .leaflet-bar a:hover {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border-bottom-color: var(--color-line);
+}
+
+.dark .leaflet-bar a:hover {
+  background-color: var(--color-canvas);
+}
+
+.dark .leaflet-control-attribution {
+  background: rgb(17 26 43 / 0.85);
+  color: var(--color-muted);
+}
+
+.dark .leaflet-control-attribution a {
+  color: var(--color-brand-300);
+}
+
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
 }

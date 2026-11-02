@@ -11,7 +11,7 @@ import { Modal } from "@/components/ui/modal";
 import { useToastActionState } from "@/lib/use-toast-action";
 import { useI18n } from "@/i18n/client";
 import { money } from "@/lib/format";
-import type { PractitionerService } from "@/lib/types";
+import type { PractitionerService, Service } from "@/lib/types";
 
 const inputClass =
   "focus-ring w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm shadow-sm";
@@ -24,11 +24,15 @@ type EditorState =
 export function PractitionerServicesEditor({
   practitionerId,
   assignments,
+  services,
   canEdit,
+  defaultDuration = 30,
 }: {
   practitionerId: string;
   assignments: PractitionerService[];
+  services: Service[];
   canEdit: boolean;
+  defaultDuration?: number;
 }) {
   const { t } = useI18n();
   const [editor, setEditor] = useState<EditorState>(null);
@@ -127,6 +131,8 @@ export function PractitionerServicesEditor({
         <ServiceDialog
           practitionerId={practitionerId}
           state={editor}
+          services={services}
+          defaultDuration={defaultDuration}
           onClose={() => setEditor(null)}
         />
       ) : null}
@@ -137,10 +143,14 @@ export function PractitionerServicesEditor({
 function ServiceDialog({
   practitionerId,
   state,
+  services,
+  defaultDuration,
   onClose,
 }: {
   practitionerId: string;
   state: Exclude<EditorState, null>;
+  services: Service[];
+  defaultDuration: number;
   onClose: () => void;
 }) {
   const { t } = useI18n();
@@ -149,11 +159,13 @@ function ServiceDialog({
 
   const [serviceName, setServiceName] = useState("");
   const [durationMinutes, setDurationMinutes] = useState(
-    String(assignment?.durationMinutes ?? 30),
+    String(assignment?.durationMinutes ?? defaultDuration),
   );
   const [price, setPrice] = useState(
     formatPriceInput(assignment?.priceCents ?? 0),
   );
+  const [durationTouched, setDurationTouched] = useState(false);
+  const [priceTouched, setPriceTouched] = useState(false);
 
   const [error, formAction, pending] = useToastActionState(
     savePractitionerServiceAction,
@@ -181,11 +193,26 @@ function ServiceDialog({
           </div>
         ) : (
           <label className="space-y-1.5 text-sm font-medium">
-            Nombre del servicio *
+            {t("practitioners.serviceName")} *
             <input
               name="serviceName"
               value={serviceName}
               onChange={(event) => setServiceName(event.target.value)}
+              onBlur={() => {
+                if (editing) return;
+                const match = services.find(
+                  (service) =>
+                    service.name.trim().toLowerCase() ===
+                    serviceName.trim().toLowerCase(),
+                );
+                if (!match) return;
+                if (!durationTouched) {
+                  setDurationMinutes(String(match.durationMinutes));
+                }
+                if (!priceTouched) {
+                  setPrice(formatPriceInput(match.priceCents));
+                }
+              }}
               className={inputClass}
               placeholder={t("practitioners.servicePlaceholder")}
               autoFocus
@@ -199,28 +226,34 @@ function ServiceDialog({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-1.5 text-sm font-medium">
-            Duración (min)
+            {t("practitioners.duration")}
             <input
               type="number"
               name="durationMinutes"
               min={5}
               max={480}
               value={durationMinutes}
-              onChange={(event) => setDurationMinutes(event.target.value)}
+              onChange={(event) => {
+                setDurationMinutes(event.target.value);
+                setDurationTouched(true);
+              }}
               className={inputClass}
               required
             />
           </label>
 
           <label className="space-y-1.5 text-sm font-medium">
-            Precio
+            {t("practitioners.price")}
             <input
               type="number"
               name="price"
               min={0}
               step="0.01"
               value={price}
-              onChange={(event) => setPrice(event.target.value)}
+              onChange={(event) => {
+                setPrice(event.target.value);
+                setPriceTouched(true);
+              }}
               className={inputClass}
               required
             />

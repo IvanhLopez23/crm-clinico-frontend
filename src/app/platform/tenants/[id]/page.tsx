@@ -2,13 +2,14 @@ import { ArrowLeft, CalendarDays, ExternalLink, Stethoscope, UsersRound } from "
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { TenantSettingsForm } from "@/components/platform/tenant-settings-form";
+import { TenantContractsManager } from "@/components/platform/tenant-contracts-manager";
 import { TenantUsersManager } from "@/components/platform/tenant-users-manager";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { api, ApiError } from "@/lib/api";
 import { getI18n } from "@/i18n/server";
 import { getSession } from "@/lib/session";
-import type { TenantDetail } from "@/lib/types";
+import type { TenantContract, TenantDetail } from "@/lib/types";
 
 export default async function TenantPage({
   params,
@@ -31,6 +32,11 @@ export default async function TenantPage({
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
   }
+
+  const contracts = await api<TenantContract[]>(
+    `/api/v1/platform/clinics/${tenant.id}/contracts`,
+    { token: session.token },
+  ).catch(() => []);
 
   return (
     <div className="space-y-6">
@@ -91,6 +97,7 @@ export default async function TenantPage({
         />
       </div>
 
+      <TenantContractsManager tenantId={tenant.id} contracts={contracts} />
       <TenantSettingsForm tenant={tenant} />
       <TenantUsersManager tenant={tenant} />
     </div>

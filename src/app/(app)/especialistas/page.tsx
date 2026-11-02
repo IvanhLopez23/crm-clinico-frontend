@@ -77,7 +77,7 @@ export default async function PractitionersPage() {
                 <tr>
                   <th className="px-5 py-2.5 font-medium">{t("common.specialist")}</th>
                   <th className="px-5 py-2.5 font-medium">{t("practitioners.specialty")}</th>
-                  <th className="px-5 py-2.5 font-medium">{t("nav.agenda")}</th>
+                  <th className="px-5 py-2.5 font-medium">{t("practitioners.durationColumn")}</th>
                   <th className="px-5 py-2.5 font-medium">{t("common.status")}</th>
                   <th className="px-5 py-2.5 font-medium" />
                 </tr>
@@ -101,10 +101,7 @@ export default async function PractitionersPage() {
                     <td className="px-5 py-3 text-muted">
                       <span className="inline-flex items-center gap-1 text-xs">
                         <CalendarClock className="h-3 w-3" aria-hidden />
-                        {t("practitioners.scheduleSummary", {
-                          slot: practitioner.defaultSlotMinutes ?? 30,
-                          buffer: practitioner.bufferAfterMinutes ?? 5,
-                        })}
+                        {t("practitioners.durationByService")}
                       </span>
                     </td>
                     <td className="px-5 py-3">

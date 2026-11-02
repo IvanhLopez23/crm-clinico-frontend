@@ -1,6 +1,5 @@
 "use server";
 
-import { DateTime } from "luxon";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
@@ -11,16 +10,16 @@ function value(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "").trim();
 }
 
+function checked(formData: FormData, key: string): boolean {
+  const raw = formData.get(key);
+  return raw === "on" || raw === "true" || raw === "1";
+}
+
 function intValue(formData: FormData, key: string): number | undefined {
   const raw = value(formData, key);
   if (!raw) return undefined;
   const parsed = Number(raw);
   return Number.isFinite(parsed) ? parsed : undefined;
-}
-
-function toIsoInClinic(value: string, timezone: string): string | null {
-  const parsed = DateTime.fromISO(value, { zone: timezone });
-  return parsed.isValid ? parsed.toUTC().toISO() : null;
 }
 
 export async function createPractitionerAction(
@@ -327,10 +326,20 @@ export async function createBlockAction(
   if (session.user.role !== "admin") return "Solo admin puede editar bloqueos.";
 
   const practitionerId = value(formData, "practitionerId");
-  const startsAt = toIsoInClinic(value(formData, "startsAt"), session.clinic.timezone);
-  const endsAt = toIsoInClinic(value(formData, "endsAt"), session.clinic.timezone);
-  if (!practitionerId || !startsAt || !endsAt) {
-    return "Completa inicio y fin del bloqueo.";
+  const day = value(formData, "day");
+  const allDay = checked(formData, "allDay");
+  const endDate = value(formData, "endDate") || day;
+  const startAllDay = allDay || checked(formData, "startAllDay");
+  const endAllDay = allDay || checked(formData, "endAllDay");
+  const startTime = value(formData, "startTime");
+  const endTime = value(formData, "endTime");
+
+  if (!practitionerId || !day) return "Selecciona el dia del bloqueo.";
+  if (!allDay && !startAllDay && !startTime) {
+    return "Indica la hora de inicio o marca todo el dia.";
+  }
+  if (!allDay && !endAllDay && !endTime) {
+    return "Indica la hora de fin o marca todo el dia.";
   }
 
   try {
@@ -339,8 +348,12 @@ export async function createBlockAction(
       token: session.token,
       body: {
         practitionerId,
-        startsAt,
-        endsAt,
+        startDate: day,
+        endDate: allDay ? day : endDate,
+        startAllDay,
+        endAllDay,
+        startTime: startAllDay ? undefined : startTime,
+        endTime: endAllDay ? undefined : endTime,
         type: value(formData, "type") || "other",
         reason: value(formData, "reason") || undefined,
       },

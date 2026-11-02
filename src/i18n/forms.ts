@@ -197,6 +197,13 @@ export const formsEs = {
   "availability.noRules":
     "Sin reglas. Agrega al menos una para que el especialista tenga horarios reservables.",
   "availability.blocks": "Bloqueos puntuales",
+  "availability.blockDay": "Día",
+  "availability.fullDay": "Día completo",
+  "availability.allDay": "Todo el día",
+  "availability.blockAllDayHint":
+    "Se bloqueará el día completo seleccionado.",
+  "availability.blockRangeHint":
+    "Sin marcar día completo puedes bloquear un rango de varios días y horas.",
   "availability.blocksHint":
     "Vacaciones, reuniones, cirugías o descansos con fecha exacta.",
   "availability.noBlocks": "Sin bloqueos en el periodo.",
@@ -205,7 +212,6 @@ export const formsEs = {
   "availability.day": "Día",
   "availability.start": "Inicio",
   "availability.end": "Fin",
-  "availability.duration": "Duración de cada cita",
   "availability.validFrom": "Vigente desde",
   "availability.edit": "Editar",
   "availability.delete": "Eliminar",
@@ -286,6 +292,16 @@ export const formsEs = {
   "users.specialistRequiredHint": "Obligatorio para el rol especialista.",
   "users.saving": "Guardando...",
   "practitioners.title": "Equipo y disponibilidad",
+  "practitioners.tabGeneral": "Datos generales",
+  "practitioners.tabServices": "Servicios y precios",
+  "practitioners.tabAvailability": "Disponibilidad",
+  "practitioners.tabBlocks": "Bloqueos",
+  "practitioners.tabsAria": "Secciones del especialista",
+  "practitioners.viewAgenda": "Ver agenda",
+  "practitioners.durationByService": "Duración según servicio",
+  "practitioners.durationColumn": "Duración",
+  "practitioners.readOnlyHint":
+    "Solo administración puede editar el perfil y la disponibilidad.",
   "practitioners.subtitle":
     "Alta de especialistas, tiempos de preparación/cierre y reglas de agenda.",
   "practitioners.active": "Activos",
@@ -294,7 +310,6 @@ export const formsEs = {
   "practitioners.emptyTitle": "Sin especialistas",
   "practitioners.emptyHint": "Crea el primero y define su disponibilidad semanal.",
   "practitioners.general": "General",
-  "practitioners.scheduleSummary": "Citas de {slot} min · cierre {buffer} min",
   "practitioners.editAgenda": "Editar agenda",
   "practitioners.blockExample": "Ejemplo de bloqueo",
   "practitioners.blockExampleText":
@@ -309,14 +324,14 @@ export const formsEs = {
   "practitioners.notAcceptingNew": "no acepta nuevos pacientes",
   "practitioners.updatedToast": "Especialista actualizado",
   "practitioners.defaultDurationHintShort":
-    "Referencia del especialista. Cada servicio puede tener su propia duración.",
+    "Se usa al agregar un servicio; la duración final la define el servicio.",
   "practitioners.fullName": "Nombre completo",
   "practitioners.specialty": "Especialidad",
   "practitioners.specialtyPlaceholder": "Medicina general",
   "practitioners.color": "Color en agenda",
-  "practitioners.defaultDuration": "Duración habitual de la cita",
+  "practitioners.defaultDuration": "Duración sugerida para servicios",
   "practitioners.defaultDurationHint":
-    "Referencia del especialista. El servicio que se agenda define la duración final.",
+    "Valor inicial para nuevos servicios. No cambia citas existentes ni sobrescribe la duración del servicio.",
   "practitioners.bufferBefore": "Preparación antes",
   "practitioners.bufferAfter": "Cierre después",
   "practitioners.bufferBeforeHint":
@@ -715,6 +730,13 @@ export const formsEn: Record<keyof typeof formsEs, string> = {
   "availability.noRules":
     "No rules. Add at least one so the specialist has bookable times.",
   "availability.blocks": "One-off blocks",
+  "availability.blockDay": "Day",
+  "availability.fullDay": "Full day",
+  "availability.allDay": "All day",
+  "availability.blockAllDayHint":
+    "The selected day will be blocked completely.",
+  "availability.blockRangeHint":
+    "Without full day, you can block a multi-day range with times.",
   "availability.blocksHint":
     "Vacations, meetings, surgeries or breaks with exact dates.",
   "availability.noBlocks": "No blocks in this period.",
@@ -723,7 +745,6 @@ export const formsEn: Record<keyof typeof formsEs, string> = {
   "availability.day": "Day",
   "availability.start": "Start",
   "availability.end": "End",
-  "availability.duration": "Appointment duration",
   "availability.validFrom": "Valid from",
   "availability.edit": "Edit",
   "availability.delete": "Delete",
@@ -804,6 +825,16 @@ export const formsEn: Record<keyof typeof formsEs, string> = {
   "users.specialistRequiredHint": "Required for the specialist role.",
   "users.saving": "Saving...",
   "practitioners.title": "Team and availability",
+  "practitioners.tabGeneral": "General details",
+  "practitioners.tabServices": "Services and pricing",
+  "practitioners.tabAvailability": "Availability",
+  "practitioners.tabBlocks": "Blocks",
+  "practitioners.tabsAria": "Specialist sections",
+  "practitioners.viewAgenda": "View schedule",
+  "practitioners.durationByService": "Duration by service",
+  "practitioners.durationColumn": "Duration",
+  "practitioners.readOnlyHint":
+    "Only administrators can edit the profile and availability.",
   "practitioners.subtitle":
     "Create specialists, preparation/turnaround times and schedule rules.",
   "practitioners.active": "Active",
@@ -812,7 +843,6 @@ export const formsEn: Record<keyof typeof formsEs, string> = {
   "practitioners.emptyTitle": "No specialists",
   "practitioners.emptyHint": "Create the first one and set their weekly availability.",
   "practitioners.general": "General",
-  "practitioners.scheduleSummary": "{slot} min appointments · {buffer} min wrap-up",
   "practitioners.editAgenda": "Edit schedule",
   "practitioners.blockExample": "Block example",
   "practitioners.blockExampleText":
@@ -827,14 +857,14 @@ export const formsEn: Record<keyof typeof formsEs, string> = {
   "practitioners.notAcceptingNew": "not accepting new patients",
   "practitioners.updatedToast": "Specialist updated",
   "practitioners.defaultDurationHintShort":
-    "Specialist reference. Each service can have its own duration.",
+    "Used when adding a service; the final duration is defined by the service.",
   "practitioners.fullName": "Full name",
   "practitioners.specialty": "Specialty",
   "practitioners.specialtyPlaceholder": "General medicine",
   "practitioners.color": "Agenda color",
-  "practitioners.defaultDuration": "Usual appointment duration",
+  "practitioners.defaultDuration": "Suggested service duration",
   "practitioners.defaultDurationHint":
-    "Specialist reference. The booked service defines the final duration.",
+    "Starting value for new services. It does not change existing appointments or override the service duration.",
   "practitioners.bufferBefore": "Preparation before",
   "practitioners.bufferAfter": "Turnaround after",
   "practitioners.bufferBeforeHint":
