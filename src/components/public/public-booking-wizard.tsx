@@ -55,11 +55,13 @@ export function PublicBookingWizard({ data }: { data: PublicClinicData }) {
 
   const availablePractitioners = useMemo(() => {
     if (!serviceId) return data.practitioners;
-    const assigned = data.assignments.filter(
-      (item) => item.serviceId === serviceId,
+    const ids = new Set(
+      data.assignments
+        .filter((item) => item.serviceId === serviceId)
+        .map((item) => item.practitionerId),
     );
-    if (assigned.length === 0) return data.practitioners;
-    const ids = new Set(assigned.map((item) => item.practitionerId));
+    // Sin asignacion no hay especialista: nunca mostrar el listado completo
+    // para un servicio que nadie ofrece.
     return data.practitioners.filter((item) => ids.has(item.id));
   }, [data.assignments, data.practitioners, serviceId]);
 
@@ -151,6 +153,17 @@ export function PublicBookingWizard({ data }: { data: PublicClinicData }) {
         status: result.appointment.status,
       });
     });
+  }
+
+  if (data.services.length === 0) {
+    return (
+      <Card className="mx-auto max-w-lg">
+        <CardContent className="space-y-2 p-8 text-center">
+          <h2 className="text-xl font-semibold">{t("public.noServices")}</h2>
+          <p className="text-sm text-muted">{t("public.noServicesHint")}</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (confirmed) {

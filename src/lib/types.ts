@@ -281,6 +281,28 @@ export type AvailabilityResponse = {
   };
 };
 
+export type AppNotification = {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  data: {
+    appointmentId?: string;
+    patientId?: string;
+    patientName?: string;
+    serviceName?: string;
+    startsAt?: string;
+    endsAt?: string;
+  };
+  readAt: string | null;
+  createdAt: string;
+};
+
+export type NotificationsResponse = {
+  items: AppNotification[];
+  unreadCount: number;
+};
+
 export type PatientSearchResult = {
   id: string;
   firstName: string;

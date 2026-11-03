@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
  * vive en el mismo origen y Next lo proxya al backend con el token httpOnly.
  * Si SSE falla, cae a polling cada 15 s.
  */
-export function useRealtimeRefresh(topics: Array<"agenda" | "sala" | "patients">) {
+export function useRealtimeRefresh(
+  topics: Array<"agenda" | "sala" | "patients" | "notifications">,
+) {
   const router = useRouter();
 
   useEffect(() => {

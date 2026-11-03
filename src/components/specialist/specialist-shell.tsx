@@ -21,8 +21,8 @@ export async function SpecialistShell({
 
   return (
     <div className="min-h-dvh bg-canvas">
-      <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-xl items-center justify-between gap-3 px-4">
+      <header className="sticky top-0 z-30 border-b border-line bg-surface/95 pt-[env(safe-area-inset-top)] backdrop-blur">
+        <div className="mx-auto flex min-h-16 w-full max-w-xl flex-wrap items-center justify-between gap-3 px-4 py-2">
           <div className="flex min-w-0 items-center gap-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white">
               <Activity className="h-4 w-4" aria-hidden />
@@ -34,7 +34,7 @@ export async function SpecialistShell({
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <LanguageSwitcher compact />
+            <LanguageSwitcher compact toggle />
             <ThemeToggle />
             <Link
               href="/mi-dia?tab=perfil"

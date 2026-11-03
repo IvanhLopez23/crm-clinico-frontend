@@ -261,7 +261,7 @@ function ServiceDialog({
         </div>
 
         <p className="rounded-xl bg-canvas px-3.5 py-3 text-xs text-muted">
-          Los tiempos de preparación y cierre se heredan del servicio base.
+          {t("practitioners.serviceHint")}
         </p>
 
         {error ? (

@@ -24,10 +24,20 @@ const es = {
   "common.selectDate": "Selecciona una fecha",
   "common.hour": "Hora",
   "common.close": "Cerrar",
-  "common.searchLanguage": "Buscar idioma…",
-  "common.noLanguageResults": "Sin idiomas.",
   "common.closeNotification": "Cerrar notificación",
   "common.optional": "Opcional",
+  "common.preferences": "Preferencias",
+  "common.preferencesHint": "Idioma y apariencia de la plataforma.",
+  "common.theme": "Tema",
+  "common.themeHint": "Claro u oscuro.",
+  "common.languageHint": "Español o inglés.",
+
+  "notifications.title": "Notificaciones",
+  "notifications.unread": "{count} sin leer",
+  "notifications.allRead": "Todo al día",
+  "notifications.markAll": "Marcar todas",
+  "notifications.empty": "No tienes notificaciones.",
+  "notifications.publicBooking": "Nueva reserva en línea",
 
   "nav.dashboard": "Panel",
   "nav.myDay": "Mi día",
@@ -125,6 +135,9 @@ const es = {
   "dashboard.status": "Estado",
 
   "specialist.myDay": "Mi día",
+  "specialist.profileTitle": "Mi perfil",
+  "specialist.profileHeading": "Mi usuario",
+  "specialist.profileHint": "Actualiza tu nombre, foto o contraseña.",
   "specialist.myProfile": "Mi perfil",
   "specialist.portal": "Portal del especialista",
   "specialist.hello": "Hola, {name}",
@@ -335,6 +348,10 @@ const es = {
   "public.practitionerFallback": "Especialista",
   "public.selectService": "Selecciona un servicio",
   "public.select": "Selecciona",
+  "public.noServices":
+    "Esta clínica todavía no tiene servicios disponibles para reservar.",
+  "public.noServicesHint":
+    "Comunícate con la clínica para más información.",
 } as const;
 
 const en: Record<keyof typeof es, string> = {
@@ -360,10 +377,20 @@ const en: Record<keyof typeof es, string> = {
   "common.selectDate": "Select a date",
   "common.hour": "Time",
   "common.close": "Close",
-  "common.searchLanguage": "Search language…",
-  "common.noLanguageResults": "No languages.",
   "common.closeNotification": "Close notification",
   "common.optional": "Optional",
+  "common.preferences": "Preferences",
+  "common.preferencesHint": "Platform language and appearance.",
+  "common.theme": "Theme",
+  "common.themeHint": "Light or dark.",
+  "common.languageHint": "Spanish or English.",
+
+  "notifications.title": "Notifications",
+  "notifications.unread": "{count} unread",
+  "notifications.allRead": "You're all caught up",
+  "notifications.markAll": "Mark all",
+  "notifications.empty": "You have no notifications.",
+  "notifications.publicBooking": "New online booking",
 
   "nav.dashboard": "Dashboard",
   "nav.myDay": "My day",
@@ -461,6 +488,9 @@ const en: Record<keyof typeof es, string> = {
   "dashboard.status": "Status",
 
   "specialist.myDay": "My day",
+  "specialist.profileTitle": "My profile",
+  "specialist.profileHeading": "My user",
+  "specialist.profileHint": "Update your name, photo or password.",
   "specialist.myProfile": "My profile",
   "specialist.portal": "Specialist portal",
   "specialist.hello": "Hello, {name}",
@@ -668,6 +698,9 @@ const en: Record<keyof typeof es, string> = {
   "public.practitionerFallback": "Specialist",
   "public.selectService": "Select a service",
   "public.select": "Select",
+  "public.noServices":
+    "This clinic does not have any services available for booking yet.",
+  "public.noServicesHint": "Contact the clinic for more information.",
 };
 
 export const messages = { es, en } as const;

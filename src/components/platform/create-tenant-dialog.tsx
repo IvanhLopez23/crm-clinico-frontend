@@ -111,6 +111,23 @@ function TenantForm({
                 />
               </div>
 
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="tenant-slug">{t("tenant.slug")}</Label>
+                <div className="flex items-center gap-2">
+                  <span className="shrink-0 rounded-lg border border-line bg-canvas px-2.5 py-2 text-xs text-muted">
+                    /reservar/
+                  </span>
+                  <Input
+                    id="tenant-slug"
+                    name="slug"
+                    placeholder="clinica-del-valle"
+                  />
+                </div>
+                <p className="text-[11px] text-muted">
+                  {t("tenant.slugCreateHint")}
+                </p>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="tenant-timezone">{t("tenant.timezone")}</Label>
                 <input type="hidden" name="timezone" value={timezone} />

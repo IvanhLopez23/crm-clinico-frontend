@@ -353,7 +353,7 @@ export const formsEs = {
   "practitioners.duration": "Duración (min)",
   "practitioners.price": "Precio",
   "practitioners.serviceHint":
-    "Los tiempos de preparación y cierre se heredan del servicio base.",
+    "La preparación y el cierre se definen en el perfil del especialista. Si están en 0, las citas se agendan una tras otra sin huecos extra.",
   "practitioners.noServices":
     "Sin servicios asignados. Agrega el primero para que este especialista pueda recibir citas.",
   "practitioners.editService": "Editar servicio",
@@ -370,6 +370,11 @@ export const formsEs = {
   "tenant.clinic": "Clínica",
   "tenant.settingsHint": "Nombre, zona horaria, moneda y estado de la clínica.",
   "tenant.name": "Nombre",
+  "tenant.slug": "URL pública",
+  "tenant.slugHint":
+    "Se usa en el portal de reservas. Ejemplo: /reservar/clinica-las-puentes. Si cambias el nombre, esta URL se mantiene.",
+  "tenant.slugCreateHint":
+    "Opcional. Si lo dejas vacío, se genera a partir del nombre.",
   "tenant.timezone": "Zona horaria",
   "tenant.currency": "Moneda",
   "tenant.active": "Tenant activo",
@@ -886,7 +891,7 @@ export const formsEn: Record<keyof typeof formsEs, string> = {
   "practitioners.duration": "Duration (min)",
   "practitioners.price": "Price",
   "practitioners.serviceHint":
-    "Preparation and turnaround times are inherited from the base service.",
+    "Preparation and turnaround times are set in the specialist profile. If both are 0, appointments are booked back to back with no extra gaps.",
   "practitioners.noServices":
     "No services assigned. Add the first one so this specialist can receive appointments.",
   "practitioners.editService": "Edit service",
@@ -903,6 +908,11 @@ export const formsEn: Record<keyof typeof formsEs, string> = {
   "tenant.clinic": "Clinic",
   "tenant.settingsHint": "Clinic name, timezone, currency and status.",
   "tenant.name": "Name",
+  "tenant.slug": "Public URL",
+  "tenant.slugHint":
+    "Used in the booking portal. Example: /reservar/clinica-las-puentes. If you change the name, this URL stays the same.",
+  "tenant.slugCreateHint":
+    "Optional. If left blank, it is generated from the name.",
   "tenant.timezone": "Timezone",
   "tenant.currency": "Currency",
   "tenant.active": "Active tenant",

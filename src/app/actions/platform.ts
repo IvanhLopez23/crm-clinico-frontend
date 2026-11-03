@@ -62,6 +62,7 @@ export async function createTenantAction(
   if (!token) return "La sesión de plataforma expiró.";
 
   const name = value(formData, "name");
+  const slug = value(formData, "slug");
   const timezone = value(formData, "timezone") || "America/Mexico_City";
   const currency = value(formData, "currency") || "MXN";
   const adminName = value(formData, "adminName");
@@ -83,6 +84,7 @@ export async function createTenantAction(
       token,
       body: {
         name,
+        ...(slug ? { slug } : {}),
         timezone,
         currency,
         latitude: coords.latitude,
@@ -112,6 +114,7 @@ export async function updateTenantAction(
 
   const clinicId = value(formData, "clinicId");
   const name = value(formData, "name");
+  const slug = value(formData, "slug");
   const timezone = value(formData, "timezone");
   const currency = value(formData, "currency");
   const isActive = formData.get("isActive") === "on";
@@ -127,6 +130,7 @@ export async function updateTenantAction(
       token,
       body: {
         name,
+        ...(slug ? { slug } : {}),
         timezone,
         currency,
         latitude: coords.latitude,

@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { EmptyState } from "@/components/empty-state";
+import { SpecialistPreferences } from "@/components/specialist/specialist-preferences";
 import { AppointmentManageButtons } from "@/components/agenda/appointment-management";
 import { PractitionerDayActions } from "@/components/practitioners/practitioner-day-actions";
 import { CheckoutButton } from "@/components/payments/checkout-dialog";
@@ -81,16 +82,17 @@ export default async function MyDayPage({
         <header>
           <p className="flex items-center gap-2 text-sm text-muted">
             <Stethoscope className="h-4 w-4" aria-hidden />
-            Mi perfil
+            {t("specialist.profileTitle")}
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            Mi usuario
+            {t("specialist.profileHeading")}
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Actualiza tu nombre, foto o contraseña.
+            {t("specialist.profileHint")}
           </p>
         </header>
         <SpecialistProfileForm user={session.user} />
+        <SpecialistPreferences />
       </div>
     );
   }

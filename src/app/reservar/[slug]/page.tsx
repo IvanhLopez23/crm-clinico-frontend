@@ -1,6 +1,7 @@
 import { Activity } from "lucide-react";
 import { notFound } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { PublicBookingWizard } from "@/components/public/public-booking-wizard";
 import { api, ApiError } from "@/lib/api";
 import { getI18n } from "@/i18n/server";
@@ -35,8 +36,9 @@ export default async function PublicBookingPage({
             <p className="text-sm font-semibold">{data.clinic.name}</p>
             <p className="text-xs text-muted">{t("public.online")}</p>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
             <LanguageSwitcher compact />
+            <ThemeToggle />
           </div>
         </div>
       </header>

@@ -1,17 +1,21 @@
 import { Activity, LogOut } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getI18n } from "@/i18n/server";
 import { initials } from "@/lib/format";
 import type { Clinic, SessionUser } from "@/lib/session";
+import type { NotificationsResponse } from "@/lib/types";
 
 export async function AppHeader({
   clinic,
   user,
+  initialNotifications,
 }: {
   clinic: Clinic;
   user: SessionUser;
+  initialNotifications: NotificationsResponse;
 }) {
   const { t } = await getI18n();
   const roleLabel =
@@ -37,6 +41,10 @@ export async function AppHeader({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        <NotificationBell
+          initial={initialNotifications}
+          timezone={clinic.timezone}
+        />
         <LanguageSwitcher compact />
         <ThemeToggle />
         <div className="flex items-center gap-2 rounded-xl border border-line bg-canvas px-2 py-1.5">

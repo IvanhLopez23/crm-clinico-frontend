@@ -1,6 +1,7 @@
 "use client";
 
 import { LoaderCircle, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { updateTenantAction } from "@/app/actions/platform";
 import { Button } from "@/components/ui/button";
@@ -36,11 +37,14 @@ const CURRENCIES = ["MXN", "USD", "EUR", "COP", "PEN", "CLP", "ARS"];
 
 export function TenantSettingsForm({ tenant }: { tenant: TenantDetail }) {
   const { t } = useI18n();
+  const router = useRouter();
+  const [slug, setSlug] = useState(tenant.slug);
   const [timezone, setTimezone] = useState(tenant.timezone);
   const [currency, setCurrency] = useState(tenant.currency);
   const [error, formAction, pending] = useToastActionState(
     updateTenantAction,
     "Tenant actualizado",
+    () => router.refresh(),
   );
 
   return (
@@ -72,6 +76,27 @@ export function TenantSettingsForm({ tenant }: { tenant: TenantDetail }) {
             defaultValue={tenant.name}
             required
           />
+        </div>
+
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="tenant-slug">{t("tenant.slug")}</Label>
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 rounded-lg border border-line bg-canvas px-2.5 py-2 text-xs text-muted">
+              /reservar/
+            </span>
+            <Input
+              id="tenant-slug"
+              name="slug"
+              value={slug}
+              onChange={(event) => setSlug(cleanSlug(event.target.value))}
+              onBlur={() =>
+                setSlug((current) => current.replace(/^-+|-+$/g, ""))
+              }
+              placeholder="clinica-las-puentes"
+              required
+            />
+          </div>
+          <p className="text-[11px] text-muted">{t("tenant.slugHint")}</p>
         </div>
 
         <div className="space-y-2">
@@ -168,5 +193,20 @@ export function TenantSettingsForm({ tenant }: { tenant: TenantDetail }) {
         </p>
       ) : null}
     </form>
+  );
+}
+
+function cleanSlug(value: string): string {
+  return (
+    value
+      .toLowerCase()
+      .replace(/^\/+/, "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      // Permitir el guion mientras se escribe. Si se recorta el guion final
+      // en cada tecla, el usuario no puede escribir "clinica-las-puentes".
+      .replace(/[^a-z0-9-]+/g, "-")
+      .replace(/-{2,}/g, "-")
+      .slice(0, 80)
   );
 }

@@ -4,7 +4,9 @@ import { AppHeader } from "@/components/app-header";
 import { AppNav } from "@/components/app-nav";
 import { SpecialistShell } from "@/components/specialist/specialist-shell";
 import { getI18n } from "@/i18n/server";
+import { api } from "@/lib/api";
 import { getSession } from "@/lib/session";
+import type { NotificationsResponse } from "@/lib/types";
 
 export default async function AppLayout({
   children,
@@ -25,6 +27,11 @@ export default async function AppLayout({
       </SpecialistShell>
     );
   }
+
+  const initialNotifications = await api<NotificationsResponse>(
+    "/api/v1/notifications",
+    { token: session.token },
+  ).catch(() => ({ items: [], unreadCount: 0 }));
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[264px_1fr]">
@@ -53,7 +60,11 @@ export default async function AppLayout({
       </aside>
 
       <div className="flex min-h-dvh min-w-0 flex-col">
-        <AppHeader clinic={clinic} user={user} />
+        <AppHeader
+          clinic={clinic}
+          user={user}
+          initialNotifications={initialNotifications}
+        />
 
         <div className="overflow-x-auto border-b border-line bg-surface px-3 py-2 lg:hidden">
           <AppNav role={user.role} />

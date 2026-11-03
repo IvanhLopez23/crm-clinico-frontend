@@ -7,9 +7,7 @@ import { setLocaleAction } from "@/app/actions/locale";
 import { Button } from "@/components/ui/button";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -27,7 +25,13 @@ const LOCALES: Array<{ value: Locale; short: string }> = [
   { value: "en", short: "EN" },
 ];
 
-export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
+export function LanguageSwitcher({
+  compact = false,
+  toggle = false,
+}: {
+  compact?: boolean;
+  toggle?: boolean;
+}) {
   const { locale, t } = useI18n();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -46,6 +50,30 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
       await setLocaleAction(next);
       router.refresh();
     });
+  }
+
+  if (toggle) {
+    const next: Locale = locale === "es" ? "en" : "es";
+
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => change(next)}
+        disabled={pending}
+        aria-label={`${t("common.language")}: ${labelFor(next)}`}
+        title={`${t("common.language")}: ${labelFor(next)}`}
+        className="h-9 gap-1.5 px-2 text-xs font-medium text-muted"
+      >
+        {pending ? (
+          <LoaderCircle className="size-3.5 animate-spin" aria-hidden />
+        ) : (
+          <Globe2 className="size-3.5" aria-hidden />
+        )}
+        <span className="text-ink">{next.toUpperCase()}</span>
+      </Button>
+    );
   }
 
   return (
@@ -73,9 +101,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
       </PopoverTrigger>
       <PopoverContent align="end" className="w-44 p-0">
         <Command>
-          <CommandInput placeholder={t("common.searchLanguage")} />
           <CommandList>
-            <CommandEmpty>{t("common.noLanguageResults")}</CommandEmpty>
             <CommandGroup>
               {LOCALES.map((item) => (
                 <CommandItem
